@@ -1,0 +1,11 @@
+<h2>Register</h2>
+<form (ngSubmit)="register()">
+  <input [(ngModel)]="name" name="name" placeholder="Name" required />
+  <input [(ngModel)]="email" name="email" placeholder="Email" required />
+  <input [(ngModel)]="password" name="password" type="password" placeholder="Password" required />
+  <select [(ngModel)]="role" name="role">
+    <option value="customer">Customer</option>
+    <option value="agent">Agent</option>
+  </select>
+  <button type="submit">Register</button>
+</form>

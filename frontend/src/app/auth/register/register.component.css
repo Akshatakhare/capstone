@@ -1,0 +1,9 @@
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+}
+input, select, button {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+}

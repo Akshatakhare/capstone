@@ -1,0 +1,8 @@
+<h1>Available Policies</h1>
+<div *ngIf="policies.length === 0">No policies found.</div>
+<div *ngFor="let p of policies" class="policy-card">
+  <h3>{{ p.title }}</h3>
+  <p>{{ p.description }}</p>
+  <p>Premium: {{ p.premium }}</p>
+  <a [routerLink]="['/policy', p._id]">View Details</a>
+</div>

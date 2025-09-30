@@ -1,0 +1,6 @@
+<div *ngIf="policy" class="policy-detail">
+  <h2>{{ policy.title }}</h2>
+  <p>{{ policy.description }}</p>
+  <p>Premium: {{ policy.premium }}</p>
+  <button (click)="buyPolicy()">Buy Policy</button>
+</div>
