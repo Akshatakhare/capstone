@@ -8,7 +8,8 @@ const claimSchema = new mongoose.Schema({
   amountClaimed: { type: Number, required: true },
   status: { type: String, enum: ['PENDING', 'APPROVED', 'REJECTED'], default: 'PENDING' },
   decisionNotes: String,
-  decidedByAgentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  decidedByAgentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  paymentRecorded: { type: Boolean, default: false }
 }, { timestamps: true });
 
 export default mongoose.model('Claim', claimSchema);

@@ -36,15 +36,23 @@ export const purchasePolicy = async (req, res) => {
 };
 
 export const listUserPolicies = async (req, res) => {
-  const userId = req.user.id;
-  // agent sees only assigned policies
-  if (req.user.role === 'agent') {
-    query.assignedAgentId = req.user.id;
+  try {
+    const query = {};
+    if (req.user.role === 'customer') {
+      query.userId = req.user.id;
+    }
+    if (req.user.role === 'agent') {
+      query.assignedAgentId = req.user.id;
+    }
+
+    const items = await UserPolicy.find(query)
+      .populate('policyProductId userId assignedAgentId')
+      .lean();
+    res.json(items);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
-  const items = await UserPolicy.find(query)
-    .populate('policyProductId userId assignedAgentId')
-    .lean();
-  res.json(items);
 };
 
 export const cancelUserPolicy = async (req, res) => {

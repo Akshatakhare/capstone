@@ -14,15 +14,21 @@ export const submitClaim = async (req, res) => {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
+    // Check if policy has an assigned agent
+    if (!up.assignedAgentId) {
+      return res.status(400).json({ message: 'Cannot submit claim: Policy must have an assigned agent' });
+    }
+
     const claim = await Claim.create({
       userId,
       userPolicyId,
       incidentDate: incidentDate ? new Date(incidentDate) : new Date(),
       description,
-      amountClaimed
+      amountClaimed,
+      decidedByAgentId: up.assignedAgentId // Automatically assign to policy's agent
     });
 
-    audit({ action: 'claim.submit', actorId: userId, details: { claimId: claim._id } });
+    audit({ action: 'claim.submit', actorId: userId, details: { claimId: claim._id, assignedAgentId: up.assignedAgentId } });
     res.status(201).json(claim);
   } catch (err) {
     console.error(err);

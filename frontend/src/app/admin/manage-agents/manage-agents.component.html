@@ -1,1 +1,111 @@
-<p>manage-agents works!</p>
+<div class="agents-container">
+  <header class="agents-header">
+    <h1>Manage Agents</h1>
+    <div class="user-info">
+      <span>Welcome, {{ user?.name }}!</span>
+      <button (click)="goBack()" class="btn btn-outline">Back to Dashboard</button>
+    </div>
+  </header>
+
+  <div class="agents-content">
+    <div class="agents-section">
+      <div class="section-header">
+        <h2>Insurance Agents</h2>
+        <button class="btn btn-primary" (click)="showCreateModal()">Create New Agent</button>
+      </div>
+      
+      <div class="agents-grid" *ngIf="agents.length > 0">
+        <div class="agent-card" *ngFor="let agent of agents">
+          <div class="agent-header">
+            <h3>{{ agent.name }}</h3>
+            <span class="agent-role">{{ agent.role }}</span>
+          </div>
+          
+          <div class="agent-details">
+            <div class="agent-info">
+              <div class="info-item">
+                <span class="label">Email:</span>
+                <span class="value">{{ agent.email }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Created:</span>
+                <span class="value">{{ agent.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="agent-actions">
+            <button class="btn btn-danger" (click)="deleteAgent(agent)">Delete Agent</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="agents.length === 0 && !loading">
+        <div class="empty-icon">👤</div>
+        <h3>No Agents Created</h3>
+        <p>Create your first agent to get started.</p>
+        <button class="btn btn-primary" (click)="showCreateModal()">Create Agent</button>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading agents...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Agent Modal -->
+  <div class="modal-overlay" *ngIf="showCreateForm" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Create New Agent</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <form (ngSubmit)="createAgent()" class="agent-form">
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input 
+            id="name" 
+            [(ngModel)]="newAgent.name" 
+            name="name" 
+            type="text" 
+            placeholder="Enter agent's full name" 
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input 
+            id="email" 
+            [(ngModel)]="newAgent.email" 
+            name="email" 
+            type="email" 
+            placeholder="Enter agent's email" 
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input 
+            id="password" 
+            [(ngModel)]="newAgent.password" 
+            name="password" 
+            type="password" 
+            placeholder="Enter initial password" 
+            required 
+          />
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="creating">
+            {{ creating ? 'Creating...' : 'Create Agent' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

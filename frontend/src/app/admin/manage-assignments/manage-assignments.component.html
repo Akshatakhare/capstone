@@ -1,0 +1,128 @@
+<div class="assignments-container">
+  <header class="assignments-header">
+    <h1>Manage Assignments</h1>
+    <div class="user-info">
+      <span>Welcome, {{ user?.name }}!</span>
+      <button (click)="goBack()" class="btn btn-outline">Back to Dashboard</button>
+    </div>
+  </header>
+
+  <div class="assignments-content">
+    <!-- Unassigned Purchased Policies -->
+    <div class="section">
+      <h2>Unassigned Purchased Policies ({{ getTotalUnassignedPolicies() }})</h2>
+      <p class="section-description">These are policies that customers have purchased but don't have an assigned agent yet. Total purchased policies: {{ getTotalPurchasedPolicies() }}</p>
+      <div class="items-grid" *ngIf="getUnassignedPolicies().length > 0">
+        <div class="item-card" *ngFor="let policy of getUnassignedPolicies()">
+          <div class="item-header">
+            <h3>{{ policy.policyProductId?.title }}</h3>
+            <span class="item-code">{{ policy.policyProductId?.code }}</span>
+          </div>
+          <div class="item-details">
+            <p><strong>Customer:</strong> {{ policy.userId?.name }}</p>
+            <p><strong>Email:</strong> {{ policy.userId?.email }}</p>
+            <p><strong>Premium Paid:</strong> ${{ policy.premiumPaid }}</p>
+            <p><strong>Status:</strong> {{ policy.status }}</p>
+            <p><strong>Start Date:</strong> {{ policy.startDate | date:'short' }}</p>
+            <p><strong>End Date:</strong> {{ policy.endDate | date:'short' }}</p>
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary" (click)="showAssignmentModalForEntity(policy, 'policy')">
+              Assign Agent
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="getUnassignedPolicies().length === 0">
+        <p>All purchased policies are assigned to agents.</p>
+      </div>
+    </div>
+
+    <!-- Claims Information -->
+    <div class="section">
+      <h2>Claims Overview</h2>
+      <p class="section-description">Claims are automatically assigned to the agent who is assigned to the policy. No manual claim assignment needed.</p>
+      <div class="info-box">
+        <h4>How it works:</h4>
+        <ol>
+          <li>Admin assigns agent to purchased policy</li>
+          <li>Customer submits claim for that policy</li>
+          <li>Claim is automatically assigned to the policy's agent</li>
+          <li>Agent reviews and approves/rejects the claim</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Assigned Items -->
+    <div class="section">
+      <h2>Assigned Items</h2>
+      <p class="section-description">These are purchased policies and claims that have been assigned to agents.</p>
+      <div class="assigned-items">
+        <div class="assigned-section">
+          <h3>Assigned Purchased Policies ({{ getTotalAssignedPolicies() }})</h3>
+          <div class="items-grid" *ngIf="getAssignedPolicies().length > 0">
+            <div class="item-card assigned" *ngFor="let policy of getAssignedPolicies()">
+              <div class="item-header">
+                <h3>{{ policy.policyProductId?.title }}</h3>
+                <span class="item-code">{{ policy.policyProductId?.code }}</span>
+              </div>
+              <div class="item-details">
+                <p><strong>Customer:</strong> {{ policy.userId?.name }}</p>
+                <p><strong>Assigned Agent:</strong> {{ getAgentName(policy.assignedAgentId) }}</p>
+                <p><strong>Premium:</strong> ${{ policy.premiumPaid }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading assignments...</p>
+    </div>
+  </div>
+
+  <!-- Assignment Modal -->
+  <div class="modal-overlay" *ngIf="showAssignmentModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Assign Agent</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <div class="assignment-form">
+        <div class="form-group">
+          <label for="agentSelect">Select Agent *</label>
+          <select 
+            id="agentSelect" 
+            [(ngModel)]="assignmentData.agentId" 
+            name="agentSelect"
+            required
+          >
+            <option value="">Choose an agent</option>
+            <option *ngFor="let agent of agents" [value]="agent._id">
+              {{ agent.name }} ({{ agent.email }})
+            </option>
+          </select>
+        </div>
+        
+        <div class="assignment-info">
+          <h4>Assignment Details:</h4>
+          <p><strong>Type:</strong> Purchased Policy</p>
+          <p><strong>Policy:</strong> {{ selectedEntity?.policyProductId?.title }} ({{ selectedEntity?.policyProductId?.code }})</p>
+          <p><strong>Customer:</strong> {{ selectedEntity?.userId?.name }} ({{ selectedEntity?.userId?.email }})</p>
+          <p><strong>Premium Paid:</strong> ${{ selectedEntity?.premiumPaid }}</p>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="assignAgent()" [disabled]="assigning">
+            {{ assigning ? 'Assigning...' : 'Assign Agent' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

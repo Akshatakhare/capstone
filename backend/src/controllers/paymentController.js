@@ -1,11 +1,27 @@
 import Payment from '../models/Payment.js';
 import UserPolicy from '../models/UserPolicy.js';
+import Claim from '../models/Claim.js';
 import { audit } from '../utils/audit.js';
 
 export const recordPayment = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { policyId, amount, method, reference } = req.body;
+    const { policyId, claimId, amount, method, reference } = req.body;
+
+    // If claimId provided, verify claim is approved and belongs to user
+    if (claimId) {
+      const claim = await Claim.findById(claimId).populate('userPolicyId');
+      if (!claim) return res.status(404).json({ message: 'Claim not found' });
+      if (String(claim.userId) !== String(userId)) {
+        return res.status(403).json({ message: 'Forbidden' });
+      }
+      if (claim.status !== 'APPROVED') {
+        return res.status(400).json({ message: 'Can only make payments for approved claims' });
+      }
+      if (claim.paymentRecorded) {
+        return res.status(400).json({ message: 'Payment already recorded for this claim' });
+      }
+    }
 
     // if policyId provided, verify exists and belongs to user (or admin)
     if (policyId) {
@@ -16,8 +32,21 @@ export const recordPayment = async (req, res) => {
       }
     }
 
-    const payment = await Payment.create({ userId, userPolicyId: policyId, amount, method: method || 'SIMULATED', reference });
-    audit({ action: 'payment.record', actorId: userId, details: { paymentId: payment._id } });
+    const payment = await Payment.create({ 
+      userId, 
+      userPolicyId: policyId, 
+      claimId: claimId,
+      amount, 
+      method: method || 'SIMULATED', 
+      reference 
+    });
+
+    // If this is a claim payment, mark the claim as paid
+    if (claimId) {
+      await Claim.findByIdAndUpdate(claimId, { paymentRecorded: true });
+    }
+
+    audit({ action: 'payment.record', actorId: userId, details: { paymentId: payment._id, claimId } });
     res.status(201).json(payment);
   } catch (err) {
     console.error(err);

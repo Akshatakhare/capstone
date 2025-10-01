@@ -1,0 +1,143 @@
+<div class="min-h-screen bg-dark-950">
+  <!-- Navigation -->
+  <app-navbar></app-navbar>
+  
+  <div class="dashboard">
+    <header class="dashboard-header">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="back-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+        <h1>Admin Dashboard</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ user?.name }}!</span>
+        <button (click)="logout()" class="btn btn-outline">Logout</button>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <!-- Main Statistics -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
+          </div>
+          <h3>Total Users</h3>
+          <p class="stat-number">{{ summary.users.total }}</p>
+          <div class="stat-breakdown">
+            <span class="breakdown-item">Customers: {{ summary.users.customers }}</span>
+            <span class="breakdown-item">Agents: {{ summary.users.agents }}</span>
+            <span class="breakdown-item">Admins: {{ summary.users.admins }}</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3>Policies Sold</h3>
+          <p class="stat-number">{{ summary.policies.total }}</p>
+          <div class="stat-breakdown">
+            <span class="breakdown-item">Active: {{ summary.policies.active }}</span>
+            <span class="breakdown-item">Assigned: {{ summary.policies.assigned }}</span>
+            <span class="breakdown-item">Unassigned: {{ summary.policies.unassigned }}</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+          </div>
+          <h3>Claims Status</h3>
+          <p class="stat-number">{{ summary.claims.total }}</p>
+          <div class="stat-breakdown">
+            <span class="breakdown-item">Pending: {{ summary.claims.pending }}</span>
+            <span class="breakdown-item">Approved: {{ summary.claims.approved }}</span>
+            <span class="breakdown-item">Rejected: {{ summary.claims.rejected }}</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <h3>Total Revenue</h3>
+          <p class="stat-number">${{ summary.revenue.total }}</p>
+          <div class="stat-breakdown">
+            <span class="breakdown-item">Premium Revenue: ${{ summary.revenue.total }}</span>
+            <span class="breakdown-item">Approved Claims: ${{ summary.revenue.approvedClaims }}</span>
+            <span class="breakdown-item">Total Claims: ${{ summary.revenue.claims }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Management Actions -->
+      <div class="management-section">
+        <h2>Management</h2>
+        <div class="management-grid">
+          <div class="management-card">
+            <div class="management-icon">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h3>Policy Management</h3>
+            <p>Create, update, and delete insurance policies</p>
+            <a routerLink="/admin/manage-policies" class="btn btn-primary">Manage Policies</a>
+          </div>
+          
+          <div class="management-card">
+            <div class="management-icon">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+            </div>
+            <h3>Agent Management</h3>
+            <p>Create new agents and manage existing ones</p>
+            <a routerLink="/admin/manage-agents" class="btn btn-primary">Manage Agents</a>
+          </div>
+          
+          <div class="management-card">
+            <div class="management-icon">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+            </div>
+            <h3>Assignments</h3>
+            <p>Assign agents to purchased policies and claims</p>
+            <a routerLink="/admin/manage-assignments" class="btn btn-primary">Manage Assignments</a>
+          </div>
+          
+          <div class="management-card">
+            <div class="management-icon">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <h3>Audit Logs</h3>
+            <p>View system activity and audit trails</p>
+            <a routerLink="/admin/audit-logs" class="btn btn-primary">View Audit Logs</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading dashboard data...</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,71 +1,107 @@
 import { Routes } from '@angular/router';
-
-// Public
-import { HomeComponent } from './public/home/home.component';
-import { PolicyDetailComponent } from './public/policy-detail/policy-detail.component';
-
-// Auth
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-
-// Customer
-import { DashboardComponent as CustomerDashboard } from './customer/dashboard/dashboard.component';
+import { HomeComponent } from './home/home.component';
+import { CustomerDashboardComponent } from './customer/dashboard/customer-dashboard.component';
 import { MyPoliciesComponent } from './customer/my-policies/my-policies.component';
 import { SubmitClaimComponent } from './customer/submit-claim/submit-claim.component';
 import { MyPaymentsComponent } from './customer/my-payments/my-payments.component';
-
-// Agent
-import { DashboardComponent as AgentDashboard } from './agent/dashboard/dashboard.component';
+import { AgentDashboardComponent } from './agent/dashboard/agent-dashboard.component';
 import { AssignedClaimsComponent } from './agent/assigned-claims/assigned-claims.component';
-
-// Admin
-import { DashboardComponent as AdminDashboard } from './admin/dashboard/dashboard.component';
+import { AssignedPoliciesComponent } from './agent/assigned-policies/assigned-policies.component';
+import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.component';
 import { ManagePoliciesComponent } from './admin/manage-policies/manage-policies.component';
 import { ManageAgentsComponent } from './admin/manage-agents/manage-agents.component';
-
-// Guards
+import { ManageAssignmentsComponent } from './admin/manage-assignments/manage-assignments.component';
+import { AuditLogsComponent } from './admin/audit-logs/audit-logs.component';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
+  // Public routes
   { path: '', component: HomeComponent },
-  { path: 'policy/:id', component: PolicyDetailComponent },
-
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-
-  {
-    path: 'dashboard/customer',
-    component: CustomerDashboard,
+  
+  // Customer routes
+  { 
+    path: 'customer/dashboard', 
+    component: CustomerDashboardComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['customer'] },
-    children: [
-      { path: 'policies', component: MyPoliciesComponent },
-      { path: 'claims', component: SubmitClaimComponent },
-      { path: 'payments', component: MyPaymentsComponent },
-    ],
+    data: { roles: ['customer'] }
   },
-
-  {
-    path: 'dashboard/agent',
-    component: AgentDashboard,
+  { 
+    path: 'customer/my-policies', 
+    component: MyPoliciesComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['agent'] },
-    children: [
-      { path: 'assigned-claims', component: AssignedClaimsComponent },
-    ],
+    data: { roles: ['customer'] }
   },
-
-  {
-    path: 'dashboard/admin',
-    component: AdminDashboard,
+  { 
+    path: 'customer/submit-claim', 
+    component: SubmitClaimComponent,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['admin'] },
-    children: [
-      { path: 'manage-policies', component: ManagePoliciesComponent },
-      { path: 'manage-agents', component: ManageAgentsComponent },
-    ],
+    data: { roles: ['customer'] }
   },
-
+  { 
+    path: 'customer/my-payments', 
+    component: MyPaymentsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['customer'] }
+  },
+  
+  // Agent routes
+  { 
+    path: 'agent/dashboard', 
+    component: AgentDashboardComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['agent'] }
+  },
+  { 
+    path: 'agent/assigned-claims', 
+    component: AssignedClaimsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['agent'] }
+  },
+  { 
+    path: 'agent/assigned-policies', 
+    component: AssignedPoliciesComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['agent'] }
+  },
+  
+  // Admin routes
+  { 
+    path: 'admin/dashboard', 
+    component: AdminDashboardComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] }
+  },
+  { 
+    path: 'admin/manage-policies', 
+    component: ManagePoliciesComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] }
+  },
+  { 
+    path: 'admin/manage-agents', 
+    component: ManageAgentsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] }
+  },
+  { 
+    path: 'admin/manage-assignments', 
+    component: ManageAssignmentsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] }
+  },
+  { 
+    path: 'admin/audit-logs', 
+    component: AuditLogsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] }
+  },
+  
+  // Wildcard route
   { path: '**', redirectTo: '' },
 ];

@@ -1,0 +1,113 @@
+<div class="min-h-screen bg-dark-950">
+  <!-- Navbar -->
+  <app-navbar></app-navbar>
+
+  <div class="dashboard">
+    <header class="dashboard-header">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="back-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+        <h1>Agent Dashboard</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ user?.name }}!</span>
+        <button (click)="logout()" class="btn btn-outline">Logout</button>
+      </div>
+    </header>
+
+    <div class="dashboard-content" *ngIf="!loading; else loadingState">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3>Total Policies</h3>
+          <p class="stat-number yellow">{{ stats.totalPolicies }}</p>
+          <a routerLink="/agent/assigned-policies" class="btn btn-primary">View Policies</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3>Active Policies</h3>
+          <p class="stat-number green">{{ stats.activePolicies }}</p>
+          <span class="stat-label">Currently Active</span>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3>Pending Claims</h3>
+          <p class="stat-number red">{{ stats.pendingClaims }}</p>
+          <a routerLink="/agent/assigned-claims" class="btn btn-primary">Review Claims</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <h3>Total Revenue</h3>
+          <p class="stat-number yellow">${{ stats.totalRevenue }}</p>
+          <span class="stat-label">From Assigned Policies</span>
+        </div>
+      </div>
+
+      <div class="claims-overview">
+        <h2>Claims Overview</h2>
+        <div class="claims-stats">
+          <div class="claim-stat">
+            <div class="claim-icon approved">✅</div>
+            <span class="claim-number approved">{{ stats.approvedClaims }}</span>
+            <span class="claim-label">Approved</span>
+          </div>
+          <div class="claim-stat">
+            <div class="claim-icon pending">⏳</div>
+            <span class="claim-number pending">{{ stats.pendingClaims }}</span>
+            <span class="claim-label">Pending</span>
+          </div>
+          <div class="claim-stat">
+            <div class="claim-icon rejected">❌</div>
+            <span class="claim-number rejected">{{ stats.rejectedClaims }}</span>
+            <span class="claim-label">Rejected</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="recent-activity" *ngIf="recentActivity.length > 0">
+        <h2>Recent Activity</h2>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let activity of recentActivity">
+            <div class="activity-icon">{{ activity.icon }}</div>
+            <div class="activity-content">
+              <h4>{{ activity.title }}</h4>
+              <p>{{ activity.description }}</p>
+              <span class="activity-date">{{ activity.date }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <ng-template #loadingState>
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading dashboard data...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

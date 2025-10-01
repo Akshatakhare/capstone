@@ -1,0 +1,55 @@
+/* Tailwind base */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light, clean base */
+html, body {
+  @apply bg-slate-50 text-slate-900 min-h-full font-sans antialiased;
+}
+
+/* Utilities */
+.card {
+  @apply bg-white border border-slate-200 rounded-2xl shadow-lg;
+}
+
+.page {
+  @apply min-h-[60vh] flex flex-col;
+}
+
+.page__container {
+  @apply flex-1 flex items-start justify-center p-6;
+}
+
+.title { @apply text-xl font-bold text-slate-900; }
+.subtitle { @apply text-slate-600 text-sm; }
+.muted { @apply text-slate-500; }
+
+.label { @apply block mb-1 text-sm text-slate-600; }
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-xl bg-primary-600 hover:bg-primary-500 active:bg-primary-700 text-white font-semibold px-5 py-2.5 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white shadow-sm hover:shadow;
+}
+
+.btn { @apply inline-flex items-center justify-center rounded-xl bg-primary-600 hover:bg-primary-500 active:bg-primary-700 text-white font-semibold px-5 py-2.5 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white shadow-sm hover:shadow; }
+
+.input {
+  @apply w-full rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 px-4 py-2.5 shadow-sm;
+}
+
+.input:focus {
+  @apply ring-2 ring-primary-500 border-transparent outline-none;
+}
+
+/* Headings spacing */
+h1, h2, h3 {
+  @apply tracking-tight;
+}
+
+/* Tabs */
+.tabs { @apply flex gap-2 px-4 pb-4 border-b border-slate-200 flex-wrap; }
+.tab { @apply inline-flex items-center px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100; }
+.tab.active { @apply bg-slate-200 text-slate-900 font-semibold; }
+
+/* Links */
+.link { @apply text-primary-600 hover:underline; }

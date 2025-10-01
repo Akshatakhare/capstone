@@ -1,9 +1,189 @@
-form {
-  display: flex;
-  flex-direction: column;
-  max-width: 300px;
+/* Register Component Dark Theme Styles */
+
+/* Custom animations for dark theme */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-input, select, button {
-  margin: 0.5rem 0;
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(14, 165, 233, 0.5);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Enhanced hover effects for dark theme */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.2), 0 10px 10px -5px rgba(14, 165, 233, 0.1);
+}
+
+/* Dark theme specific styles */
+.dark-card {
+  background: linear-gradient(145deg, #1e293b, #334155);
+  border: 1px solid #475569;
+}
+
+.dark-card:hover {
+  border-color: #0ea5e9;
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Form input focus effects */
+input:focus, select:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
+}
+
+/* Button hover effects */
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.2);
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Role selection styling */
+select option {
+  background: #1e293b;
+  color: #fefdf8;
   padding: 0.5rem;
+}
+
+/* Form validation styles */
+input:invalid {
+  border-color: #ef4444;
+}
+
+input:valid {
+  border-color: #10b981;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .min-h-\[calc\(100vh-200px\)\] {
+    min-height: calc(100vh - 150px);
+  }
+  
+  .p-8 {
+    padding: 1.5rem;
+  }
+  
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+  
+  .space-y-6 > * + * {
+    margin-top: 1rem;
+  }
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Enhanced form styling */
+.form-group {
+  position: relative;
+}
+
+.form-group label {
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus + label,
+.form-group select:focus + label {
+  color: #0ea5e9;
+  transform: translateY(-2px);
+}
+
+/* Success state for form completion */
+.form-complete input:valid,
+.form-complete select:valid {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+/* Error state styling */
+.error-state input,
+.error-state select {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* Accessibility improvements */
+input:focus,
+select:focus,
+button:focus {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+/* Animation for form submission */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.submitting {
+  animation: pulse 2s infinite;
 }

@@ -1,0 +1,156 @@
+<div class="min-h-screen bg-dark-950">
+  <!-- Navigation -->
+  <app-navbar></app-navbar>
+  
+  <div class="dashboard">
+    <header class="dashboard-header">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="back-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+        <h1>Customer Dashboard</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ user?.name }}!</span>
+        <button (click)="logout()" class="btn btn-outline">Logout</button>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <!-- Policy Statistics -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3>Active Policies</h3>
+          <p class="stat-number green">{{ stats.activePolicies || 0 }}</p>
+          <p class="stat-detail">Currently Active</p>
+          <a routerLink="/customer/my-policies" class="btn btn-primary">View My Policies</a>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3>Pending Policies</h3>
+          <p class="stat-number yellow">{{ stats.pendingPolicies || 0 }}</p>
+          <p class="stat-detail">Awaiting Agent Assignment</p>
+          <a routerLink="/customer/my-policies" class="btn btn-primary">View Details</a>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+          </div>
+          <h3>Total Payments</h3>
+          <p class="stat-number blue">{{ stats.totalPayments || 0 }}</p>
+          <p class="stat-detail">Payment Records</p>
+          <a routerLink="/customer/my-payments" class="btn btn-primary">View Payments</a>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <h3>Total Amount</h3>
+          <p class="stat-number blue">${{ stats.totalAmount || 0 }}</p>
+          <p class="stat-detail">Total Premium Paid</p>
+          <a routerLink="/customer/my-payments" class="btn btn-primary">Payment History</a>
+        </div>
+      </div>
+
+      <!-- Browse Policies Section -->
+      <div class="browse-section">
+        <h2>Browse & Purchase Policies</h2>
+        
+        <!-- Action Buttons -->
+        <div class="browse-actions">
+          <a routerLink="/customer/my-policies" class="btn btn-primary browse-btn">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            Browse All Policies
+          </a>
+          <a routerLink="/customer/submit-claim" class="btn btn-secondary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            Submit Claim
+          </a>
+        </div>
+
+        <!-- Insurance Products Info -->
+        <div class="browse-info">
+          <div class="info-icon">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <div class="info-content">
+            <h3>Explore Our Insurance Products</h3>
+            <p>Browse our comprehensive range of insurance policies including life, health, auto, and home insurance. Find the perfect coverage for your needs.</p>
+            <div class="features-list">
+              <div class="feature-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Life Insurance</span>
+              </div>
+              <div class="feature-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Health Insurance</span>
+              </div>
+              <div class="feature-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Auto Insurance</span>
+              </div>
+              <div class="feature-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Home Insurance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="recent-activity" *ngIf="recentActivity.length > 0">
+        <h2>Recent Activity</h2>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let activity of recentActivity">
+            <div class="activity-icon">{{ activity.icon }}</div>
+            <div class="activity-content">
+              <h4>{{ activity.title }}</h4>
+              <p>{{ activity.description }}</p>
+              <span class="activity-date">{{ activity.date }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading dashboard data...</p>
+      </div>
+    </div>
+  </div>
+</div>

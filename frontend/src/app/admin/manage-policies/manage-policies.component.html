@@ -1,1 +1,252 @@
-<p>manage-policies works!</p>
+<div class="min-h-screen bg-dark-950">
+  <!-- Navigation -->
+  <app-navbar></app-navbar>
+  
+  <div class="policies-container">
+    <header class="policies-header">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="back-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+        <h1>Manage Policies</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ user?.name }}!</span>
+      </div>
+    </header>
+
+  <div class="policies-content">
+    <div class="policies-section">
+      <div class="section-header">
+        <h2>Insurance Policies</h2>
+        <button class="btn btn-primary" (click)="showCreateModal()">Create New Policy</button>
+      </div>
+      
+      <div class="policies-grid" *ngIf="policies.length > 0">
+        <div class="policy-card" *ngFor="let policy of policies">
+          <div class="policy-header">
+            <h3>{{ policy.title }}</h3>
+            <span class="policy-code">{{ policy.code }}</span>
+          </div>
+          
+          <div class="policy-details">
+            <p class="policy-description">{{ policy.description }}</p>
+            
+            <div class="policy-info">
+              <div class="info-item">
+                <span class="label">Premium:</span>
+                <span class="value">${{ policy.premium }}/month</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Term:</span>
+                <span class="value">{{ policy.termMonths }} months</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Min Coverage:</span>
+                <span class="value">${{ policy.minSumInsured }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Created:</span>
+                <span class="value">{{ policy.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="policy-actions">
+            <button class="btn btn-secondary" (click)="showEditModal(policy)">Edit</button>
+            <button class="btn btn-danger" (click)="deletePolicy(policy)">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="policies.length === 0 && !loading">
+        <div class="empty-icon">📋</div>
+        <h3>No Policies Created</h3>
+        <p>Create your first policy to get started.</p>
+        <button class="btn btn-primary" (click)="showCreateModal()">Create Policy</button>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading policies...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Policy Modal -->
+  <div class="modal-overlay" *ngIf="showCreateForm" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Create New Policy</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <form (ngSubmit)="createPolicy()" class="policy-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="code">Policy Code *</label>
+            <input 
+              id="code" 
+              [(ngModel)]="newPolicy.code" 
+              name="code" 
+              type="text" 
+              placeholder="e.g., AUTO-001" 
+              required 
+            />
+          </div>
+          <div class="form-group">
+            <label for="title">Policy Title *</label>
+            <input 
+              id="title" 
+              [(ngModel)]="newPolicy.title" 
+              name="title" 
+              type="text" 
+              placeholder="e.g., Auto Insurance" 
+              required 
+            />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            [(ngModel)]="newPolicy.description" 
+            name="description" 
+            placeholder="Policy description..."
+            rows="3"
+          ></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="premium">Monthly Premium ($) *</label>
+            <input 
+              id="premium" 
+              [(ngModel)]="newPolicy.premium" 
+              name="premium" 
+              type="number" 
+              step="0.01" 
+              placeholder="100.00" 
+              required 
+            />
+          </div>
+          <div class="form-group">
+            <label for="termMonths">Term (Months)</label>
+            <input 
+              id="termMonths" 
+              [(ngModel)]="newPolicy.termMonths" 
+              name="termMonths" 
+              type="number" 
+              placeholder="12" 
+            />
+          </div>
+          <div class="form-group">
+            <label for="minSumInsured">Min Sum Insured ($)</label>
+            <input 
+              id="minSumInsured" 
+              [(ngModel)]="newPolicy.minSumInsured" 
+              name="minSumInsured" 
+              type="number" 
+              placeholder="10000" 
+            />
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="creating">
+            {{ creating ? 'Creating...' : 'Create Policy' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Policy Modal -->
+  <div class="modal-overlay" *ngIf="showEditForm" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Edit Policy</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <form (ngSubmit)="updatePolicy()" class="policy-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editCode">Policy Code *</label>
+            <input 
+              id="editCode" 
+              [(ngModel)]="newPolicy.code" 
+              name="editCode" 
+              type="text" 
+              required 
+            />
+          </div>
+          <div class="form-group">
+            <label for="editTitle">Policy Title *</label>
+            <input 
+              id="editTitle" 
+              [(ngModel)]="newPolicy.title" 
+              name="editTitle" 
+              type="text" 
+              required 
+            />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="editDescription">Description</label>
+          <textarea 
+            id="editDescription" 
+            [(ngModel)]="newPolicy.description" 
+            name="editDescription" 
+            rows="3"
+          ></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editPremium">Monthly Premium ($) *</label>
+            <input 
+              id="editPremium" 
+              [(ngModel)]="newPolicy.premium" 
+              name="editPremium" 
+              type="number" 
+              step="0.01" 
+              required 
+            />
+          </div>
+          <div class="form-group">
+            <label for="editTermMonths">Term (Months)</label>
+            <input 
+              id="editTermMonths" 
+              [(ngModel)]="newPolicy.termMonths" 
+              name="editTermMonths" 
+              type="number" 
+            />
+          </div>
+          <div class="form-group">
+            <label for="editMinSumInsured">Min Sum Insured ($)</label>
+            <input 
+              id="editMinSumInsured" 
+              [(ngModel)]="newPolicy.minSumInsured" 
+              name="editMinSumInsured" 
+              type="number" 
+            />
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="creating">
+            {{ creating ? 'Updating...' : 'Update Policy' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

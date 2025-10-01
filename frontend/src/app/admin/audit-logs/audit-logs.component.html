@@ -1,0 +1,51 @@
+<div class="audit-container">
+  <header class="audit-header">
+    <h1>Audit Logs</h1>
+    <div class="user-info">
+      <span>Welcome, {{ user?.name }}!</span>
+      <button (click)="goBack()" class="btn btn-outline">Back to Dashboard</button>
+    </div>
+  </header>
+
+  <div class="audit-content">
+    <div class="audit-section">
+      <div class="section-header">
+        <h2>System Activity Log</h2>
+        <button class="btn btn-primary" (click)="loadAuditLogs()">Refresh</button>
+      </div>
+      
+      <div class="logs-list" *ngIf="auditLogs.length > 0">
+        <div class="log-item" *ngFor="let log of auditLogs">
+          <div class="log-icon" [style.background-color]="getActionColor(log.action)">
+            {{ getActionIcon(log.action) }}
+          </div>
+          <div class="log-content">
+            <div class="log-header">
+              <h4>{{ formatAction(log.action) }}</h4>
+              <span class="log-time">{{ log.timestamp | date:'short' }}</span>
+            </div>
+            <div class="log-details">
+              <p><strong>Actor ID:</strong> {{ log.actorId }}</p>
+              <p *ngIf="log.details"><strong>Details:</strong> {{ log.details | json }}</p>
+              <p *ngIf="log.ip"><strong>IP Address:</strong> {{ log.ip }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="auditLogs.length === 0 && !loading">
+        <div class="empty-icon">📋</div>
+        <h3>No Audit Logs</h3>
+        <p>No system activity has been recorded yet.</p>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading audit logs...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

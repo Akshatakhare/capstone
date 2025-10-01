@@ -1,0 +1,207 @@
+<div class="min-h-screen bg-dark-950">
+  <!-- Navigation -->
+  <app-navbar></app-navbar>
+  
+  <div class="policies-container">
+    <header class="policies-header">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="back-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+        <h1>Assigned Policies</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ user?.name }}!</span>
+      </div>
+    </header>
+
+  <div class="policies-content">
+    <!-- Statistics Cards -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Policies</h3>
+          <p class="stat-number">{{ getPolicyStats().total }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Active Policies</h3>
+          <p class="stat-number">{{ getPolicyStats().active }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Cancelled</h3>
+          <p class="stat-number">{{ getPolicyStats().cancelled }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Revenue</h3>
+          <p class="stat-number">${{ getPolicyStats().totalRevenue }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter and Policies -->
+    <div class="policies-section">
+      <div class="section-header">
+        <h2>Policy Management</h2>
+        <div class="filter-controls">
+          <label for="statusFilter">Filter by Status:</label>
+          <select id="statusFilter" [(ngModel)]="statusFilter" name="statusFilter">
+            <option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="policies-grid" *ngIf="getFilteredPolicies().length > 0">
+        <div class="policy-card" *ngFor="let policy of getFilteredPolicies()" (click)="showPolicyDetails(policy)">
+          <div class="policy-header">
+            <h3>{{ policy.policyProductId?.title }}</h3>
+            <span class="policy-code">{{ policy.policyProductId?.code }}</span>
+            <span class="status-badge" [style.background-color]="getStatusColor(policy.status)">
+              {{ getStatusIcon(policy.status) }} {{ policy.status }}
+            </span>
+          </div>
+          
+          <div class="policy-details">
+            <div class="policy-info">
+              <div class="info-item">
+                <span class="label">Customer:</span>
+                <span class="value">{{ policy.userId?.name || 'N/A' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Email:</span>
+                <span class="value">{{ policy.userId?.email || 'N/A' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Premium Paid:</span>
+                <span class="value">${{ policy.premiumPaid }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Start Date:</span>
+                <span class="value">{{ policy.startDate | date:'short' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">End Date:</span>
+                <span class="value">{{ policy.endDate | date:'short' }}</span>
+              </div>
+              <div class="info-item" *ngIf="policy.nominee?.name">
+                <span class="label">Nominee:</span>
+                <span class="value">{{ policy.nominee?.name }} ({{ policy.nominee?.relation }})</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="policy-actions">
+            <button class="btn btn-primary" (click)="showPolicyDetails(policy); $event.stopPropagation()">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="getFilteredPolicies().length === 0 && !loading">
+        <div class="empty-icon">📋</div>
+        <h3>No Policies Found</h3>
+        <p *ngIf="statusFilter === 'ALL'">You don't have any policies assigned to you.</p>
+        <p *ngIf="statusFilter !== 'ALL'">No {{ statusFilter.toLowerCase() }} policies found.</p>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading policies...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Details Modal -->
+  <div class="modal-overlay" *ngIf="showPolicyModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Policy Details</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <div class="policy-details-modal" *ngIf="selectedPolicy">
+        <div class="policy-summary">
+          <div class="summary-section">
+            <h4>Policy Information</h4>
+            <div class="summary-item">
+              <span class="label">Policy Title:</span>
+              <span class="value">{{ selectedPolicy.policyProductId?.title }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Policy Code:</span>
+              <span class="value">{{ selectedPolicy.policyProductId?.code }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Description:</span>
+              <span class="value">{{ selectedPolicy.policyProductId?.description }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Status:</span>
+              <span class="value status-value" [style.color]="getStatusColor(selectedPolicy.status)">
+                {{ getStatusIcon(selectedPolicy.status) }} {{ selectedPolicy.status }}
+              </span>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <h4>Customer Information</h4>
+            <div class="summary-item">
+              <span class="label">Name:</span>
+              <span class="value">{{ selectedPolicy.userId?.name }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Email:</span>
+              <span class="value">{{ selectedPolicy.userId?.email }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Phone:</span>
+              <span class="value">{{ selectedPolicy.userId?.phone || 'N/A' }}</span>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <h4>Policy Terms</h4>
+            <div class="summary-item">
+              <span class="label">Premium Paid:</span>
+              <span class="value">${{ selectedPolicy.premiumPaid }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Monthly Premium:</span>
+              <span class="value">${{ selectedPolicy.policyProductId?.premium }}/month</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Term:</span>
+              <span class="value">{{ selectedPolicy.policyProductId?.termMonths }} months</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Coverage:</span>
+              <span class="value">${{ selectedPolicy.policyProductId?.minSumInsured }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Start Date:</span>
+              <span class="value">{{ selectedPolicy.startDate | date:'full' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">End Date:</span>
+              <span class="value">{{ selectedPolicy.endDate | date:'full' }}</span>
+            </div>
+            <div class="summary-item" *ngIf="selectedPolicy.nominee?.name">
+              <span class="label">Nominee:</span>
+              <span class="value">{{ selectedPolicy.nominee?.name }} ({{ selectedPolicy.nominee?.relation }})</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

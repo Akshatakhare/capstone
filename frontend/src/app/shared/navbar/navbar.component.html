@@ -1,1 +1,109 @@
-<p>navbar works!</p>
+<nav class="bg-dark-900 shadow-xl border-b border-dark-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <a routerLink="/" class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-cream-50">InsurePro</span>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-6">
+        <a routerLink="/" routerLinkActive="text-primary-400" 
+           [routerLinkActiveOptions]="{exact: true}"
+           class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          Home
+        </a>
+        
+        <!-- Role-based navigation for logged-in users -->
+        <div class="flex items-center space-x-4" *ngIf="user">
+          <!-- Customer Navigation -->
+          <ng-container *ngIf="user.role === 'customer'">
+            <a routerLink="/customer/my-policies" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              My Policies
+            </a>
+            <a routerLink="/customer/submit-claim" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Submit Claim
+            </a>
+            <a routerLink="/customer/my-payments" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Payments
+            </a>
+          </ng-container>
+
+          <ng-container *ngIf="user.role === 'agent'">
+            <a routerLink="/agent/assigned-policies" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Assigned Policies
+            </a>
+            <a routerLink="/agent/assigned-claims" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Assigned Claims
+            </a>
+          </ng-container>
+
+          <!-- Admin Navigation -->
+          <ng-container *ngIf="user.role === 'admin'">
+            <a routerLink="/admin/manage-policies" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Manage Policies
+            </a>
+            <a routerLink="/admin/manage-agents" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Manage Agents
+            </a>
+            <a routerLink="/admin/manage-assignments" routerLinkActive="text-primary-400"
+               class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Assignments
+            </a>
+          </ng-container>
+        </div>
+        
+        <!-- Guest Navigation -->
+        <div class="flex items-center space-x-4" *ngIf="!user">
+          <a routerLink="/login" 
+             class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Login
+          </a>
+          <a routerLink="/register" 
+             class="text-cream-100 hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Register
+          </a>
+        </div>
+
+        <!-- User Menu -->
+        <div class="relative" *ngIf="user">
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-cream-200">Welcome, {{ user.name }}</span>
+            <a [routerLink]="getDashboardRoute()" 
+               class="bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-500 transition-colors shadow-lg">
+              Dashboard
+            </a>
+            <button (click)="logout()" 
+                    class="text-cream-100 hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden flex items-center">
+        <button (click)="toggleMenu()" 
+                class="text-cream-100 hover:text-primary-400 focus:outline-none focus:text-primary-400">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path *ngIf="!isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            <path *ngIf="isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>

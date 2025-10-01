@@ -10,12 +10,16 @@ import userPoliciesRoutes from './routes/userPolicies.js';
 import claimRoutes from './routes/claims.js';
 import paymentRoutes from './routes/payments.js';
 import agentRoutes from './routes/agents.js';
-import adminRoutes from './routes/admin.js'
+import adminRoutes from './routes/admin.js';
+import userRoutes from './routes/users.js';
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -27,6 +31,7 @@ app.use('/api/v1/claims', claimRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/agents', agentRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/users', userRoutes);
 
 // health
 app.get('/', (req, res) => res.json({ message: 'Insurance API running' }));

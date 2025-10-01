@@ -1,1 +1,181 @@
-<p>my-policies works!</p>
+<div class="min-h-screen bg-dark-950">
+  <!-- Navigation -->
+  <app-navbar></app-navbar>
+  
+  <div class="policies-container">
+    <header class="policies-header">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="back-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+        <h1>My Policies</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ user?.name }}!</span>
+      </div>
+    </header>
+
+  <div class="policies-content">
+    <!-- My Purchased Policies -->
+    <div class="policies-section" *ngIf="userPolicies.length > 0">
+      <h2>My Purchased Policies</h2>
+      
+      <div class="policies-grid">
+        <div class="policy-card purchased" *ngFor="let userPolicy of userPolicies">
+          <div class="policy-header">
+            <h3>{{ userPolicy.policyProductId?.title }}</h3>
+            <span class="policy-code">{{ userPolicy.policyProductId?.code }}</span>
+            <span class="status-badge" [class]="'status-' + userPolicy.status.toLowerCase()">
+              {{ userPolicy.status }}
+            </span>
+          </div>
+          
+          <div class="policy-details">
+            <div class="policy-info">
+              <div class="info-item">
+                <span class="label">Premium Paid:</span>
+                <span class="value">${{ userPolicy.premiumPaid }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Start Date:</span>
+                <span class="value">{{ userPolicy.startDate | date:'short' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">End Date:</span>
+                <span class="value">{{ userPolicy.endDate | date:'short' }}</span>
+              </div>
+              <div class="info-item" *ngIf="userPolicy.nominee?.name">
+                <span class="label">Nominee:</span>
+                <span class="value">{{ userPolicy.nominee.name }} ({{ userPolicy.nominee.relation }})</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="policy-actions" *ngIf="userPolicy.status === 'ACTIVE'">
+            <button class="btn btn-danger" (click)="cancelPolicy(userPolicy)">Cancel Policy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Policies -->
+    <div class="policies-section">
+      <h2>Available Policies</h2>
+      
+      <div class="policies-grid" *ngIf="policies.length > 0">
+        <div class="policy-card" *ngFor="let policy of policies">
+          <div class="policy-header">
+            <h3>{{ policy.title }}</h3>
+            <span class="policy-code">{{ policy.code }}</span>
+          </div>
+          
+          <div class="policy-details">
+            <p class="policy-description">{{ policy.description }}</p>
+            
+            <div class="policy-info">
+              <div class="info-item">
+                <span class="label">Premium:</span>
+                <span class="value">${{ policy.premium }}/month</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Term:</span>
+                <span class="value">{{ policy.termMonths }} months</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Min Coverage:</span>
+                <span class="value">${{ policy.minSumInsured }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="policy-actions">
+            <button class="btn btn-primary" (click)="showPurchaseModal(policy)">Purchase Policy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="policies.length === 0 && !loading">
+        <div class="empty-icon">📋</div>
+        <h3>No Policies Available</h3>
+        <p>There are no policies available at the moment.</p>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading policies...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Purchase Modal -->
+  <div class="modal-overlay" *ngIf="showPurchaseForm" (click)="cancelPurchase()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Purchase Policy: {{ selectedPolicy?.title }}</h3>
+        <button class="close-btn" (click)="cancelPurchase()">&times;</button>
+      </div>
+      
+      <form (ngSubmit)="purchasePolicy()" class="purchase-form">
+        <div class="form-group">
+          <label for="startDate">Start Date</label>
+          <input 
+            id="startDate" 
+            [(ngModel)]="purchaseData.startDate" 
+            name="startDate" 
+            type="date" 
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="termMonths">Term (Months)</label>
+          <input 
+            id="termMonths" 
+            [(ngModel)]="purchaseData.termMonths" 
+            name="termMonths" 
+            type="number" 
+            min="1" 
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="nomineeName">Nominee Name</label>
+          <input 
+            id="nomineeName" 
+            [(ngModel)]="purchaseData.nominee.name" 
+            name="nomineeName" 
+            type="text" 
+            placeholder="Enter nominee name" 
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="nomineeRelation">Nominee Relation</label>
+          <select 
+            id="nomineeRelation" 
+            [(ngModel)]="purchaseData.nominee.relation" 
+            name="nomineeRelation" 
+            required
+          >
+            <option value="">Select relation</option>
+            <option value="Spouse">Spouse</option>
+            <option value="Child">Child</option>
+            <option value="Parent">Parent</option>
+            <option value="Sibling">Sibling</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="cancelPurchase()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Purchase Policy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

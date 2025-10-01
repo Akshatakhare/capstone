@@ -1,1 +1,146 @@
-<p>assigned-claims works!</p>
+<div class="min-h-screen bg-dark-950">
+  <!-- Navigation -->
+  <app-navbar></app-navbar>
+  
+  <div class="claims-container">
+    <header class="claims-header">
+      <div class="flex items-center space-x-4">
+        <button (click)="goBack()" class="back-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+        <h1>Assigned Claims</h1>
+      </div>
+      <div class="user-info">
+        <span>Welcome, {{ user?.name }}!</span>
+      </div>
+    </header>
+
+  <div class="claims-content">
+    <div class="claims-section">
+      <h2>Claims Requiring Review</h2>
+      
+      <div class="claims-grid" *ngIf="claims.length > 0">
+        <div class="claim-card" *ngFor="let claim of claims" (click)="showClaimDetails(claim)">
+          <div class="claim-header">
+            <h3>Claim #{{ claim._id.slice(-6) }}</h3>
+            <span class="status-badge" [style.background-color]="getStatusColor(claim.status)">
+              {{ getStatusIcon(claim.status) }} {{ claim.status }}
+            </span>
+          </div>
+          
+          <div class="claim-details">
+            <div class="claim-info">
+              <div class="info-item">
+                <span class="label">Customer:</span>
+                <span class="value">{{ claim.userId?.name || 'N/A' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Policy:</span>
+                <span class="value">{{ claim.userPolicyId?.policyProductId?.title || 'N/A' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Amount Claimed:</span>
+                <span class="value">${{ claim.amountClaimed }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Incident Date:</span>
+                <span class="value">{{ claim.incidentDate | date:'short' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Submitted:</span>
+                <span class="value">{{ claim.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+            
+            <div class="claim-description">
+              <p><strong>Description:</strong></p>
+              <p>{{ claim.description }}</p>
+            </div>
+          </div>
+          
+          <div class="claim-actions" *ngIf="claim.status === 'PENDING'">
+            <button class="btn btn-success" (click)="showClaimDetails(claim); $event.stopPropagation()">
+              Review Claim
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="claims.length === 0 && !loading">
+        <div class="empty-icon">📋</div>
+        <h3>No Assigned Claims</h3>
+        <p>You don't have any claims assigned to you at the moment.</p>
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading claims...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Claim Review Modal -->
+  <div class="modal-overlay" *ngIf="showClaimModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Review Claim #{{ selectedClaim?._id?.slice(-6) }}</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <div class="claim-review" *ngIf="selectedClaim">
+        <div class="claim-summary">
+          <div class="summary-item">
+            <span class="label">Customer:</span>
+            <span class="value">{{ selectedClaim.userId?.name }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ selectedClaim.userId?.email }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Policy:</span>
+            <span class="value">{{ selectedClaim.userPolicyId?.policyProductId?.title }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Policy Code:</span>
+            <span class="value">{{ selectedClaim.userPolicyId?.policyProductId?.code }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Amount Claimed:</span>
+            <span class="value">${{ selectedClaim.amountClaimed }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Incident Date:</span>
+            <span class="value">{{ selectedClaim.incidentDate | date:'full' }}</span>
+          </div>
+        </div>
+        
+        <div class="claim-description">
+          <h4>Incident Description:</h4>
+          <p>{{ selectedClaim.description }}</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="decisionNotes">Decision Notes:</label>
+          <textarea 
+            id="decisionNotes" 
+            [(ngModel)]="decisionNotes" 
+            name="decisionNotes" 
+            placeholder="Add notes about your decision..."
+            rows="4"
+          ></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="rejectClaim()">Reject Claim</button>
+          <button type="button" class="btn btn-success" (click)="approveClaim()">Approve Claim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
